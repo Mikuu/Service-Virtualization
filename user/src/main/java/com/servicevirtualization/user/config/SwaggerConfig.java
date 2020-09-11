@@ -1,4 +1,4 @@
-package com.servicevirtualization.provider.config;
+package com.servicevirtualization.user.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
