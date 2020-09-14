@@ -1,0 +1,25 @@
+---
+server:
+  port: 8080
+  servlet:
+    contextPath: /consumer/employee/api
+---
+spring:
+  profiles: default
+  application:
+    name: service-virtualization-employee
+---
+user-svc:
+  url: http://localhost:8081/provider/user/api
+  pathCreateUser: /user
+  pathGetUsers: /users
+  pathFetchUser: /user/{uid}
+  pathUpdateUser: /user/{uid}
+  pathDeleteUser: /user/{uid}
+---
+salary-svc:
+  url: http://localhost:8082/provider/salary/api
+  pathCreateSalary: /salary
+  pathFetchSalary: /salary/{uid}
+  pathUpdateSalary: /salary/{uid}
+  pathDeleteSalary: /salary/{uid}
