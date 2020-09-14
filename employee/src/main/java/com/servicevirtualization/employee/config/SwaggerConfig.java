@@ -1,4 +1,4 @@
-package com.servicevirtualization.user.config;
+package com.servicevirtualization.employee.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(this.apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.servicevirtualization.user.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.servicevirtualization.employee.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
