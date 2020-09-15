@@ -3,15 +3,17 @@ package com.servicevirtualization.employee.service;
 import com.servicevirtualization.employee.exception.SVException;
 import com.servicevirtualization.employee.model.Salary;
 import com.servicevirtualization.employee.property.SalaryProperty;
-import com.servicevirtualization.employee.property.UserProperty;
 import com.servicevirtualization.employee.representation.request.CreateSalaryRequestDTO;
+import com.servicevirtualization.employee.representation.request.UpdateSalaryRequestDTO;
 import com.servicevirtualization.employee.representation.response.CreateSalaryResponseDTO;
+import com.servicevirtualization.employee.representation.response.GetSalaryResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SalaryService {
@@ -34,33 +36,60 @@ public class SalaryService {
 
         CreateSalaryResponseDTO response = restTemplate.postForObject(url, request, CreateSalaryResponseDTO.class);
 
+        // ToDo -> Error handling for invalid uid fetch.
+
         return response.getUid();
     }
 
-//    public int deleteSalaryByUid(String uid) {
-//        return salaryRepository.deleteSalaryByUid(uid);
-//    }
-//
-//    public Salary getSalary(String uid) throws SVException {
-//        Salary salary = salaryRepository.findByUid(uid);
-//
-//        if (salary == null) {
-//            throw new SVException(MessageFormat.format("no salary found by uid {0}.", uid));
-//        }
-//
-//        return salary;
-//    }
-//
-//    public Salary updateSalary(String uid, int newSalary) throws SVException {
-//        Salary salary = salaryRepository.findByUid(uid);
-//
-//        if (salary == null) {
-//            throw new SVException(MessageFormat.format("no salary found by uid {0}.", uid));
-//        }
-//
-//        salary.setAmount(newSalary);
-//        salaryRepository.save(salary);
-//
-//        return salary;
-//    }
+    public void deleteSalaryByUid(String uid) {
+        Map<String, String> pathParameters = new HashMap<>();
+        pathParameters.put("uid", uid);
+
+        String url = UriComponentsBuilder
+                .fromUriString(salaryProperty.getUrl())
+                .path(salaryProperty.getPathDeleteSalary())
+                .buildAndExpand(pathParameters)
+                .toUriString();
+
+        restTemplate.delete(url);
+    }
+
+    public Salary fetchSalary(String uid) throws SVException {
+        Map<String, String> pathParameters = new HashMap<>();
+        pathParameters.put("uid", uid);
+
+        String url = UriComponentsBuilder
+                .fromUriString(salaryProperty.getUrl())
+                .path(salaryProperty.getPathFetchSalary())
+                .buildAndExpand(pathParameters)
+                .toUriString();
+
+        GetSalaryResponseDTO response = restTemplate.getForObject(url, GetSalaryResponseDTO.class);
+
+        // ToDo -> Error handling for invalid uid fetch.
+
+        Salary salary = new Salary();
+        salary.setUid(response.getUid());
+        salary.setAmount(response.getSalary());
+
+        return salary;
+    }
+
+    public void updateSalary(String uid, int newSalary) throws SVException {
+        Map<String, String> pathParameters = new HashMap<>();
+        pathParameters.put("uid", uid);
+
+        String url = UriComponentsBuilder
+                .fromUriString(salaryProperty.getUrl())
+                .path(salaryProperty.getPathUpdateSalary())
+                .buildAndExpand(pathParameters)
+                .toUriString();
+
+        UpdateSalaryRequestDTO request = new UpdateSalaryRequestDTO();
+        request.setSalary(newSalary);
+
+        restTemplate.put(url, request);
+
+        // ToDo -> Error handling for invalid uid fetch.
+    }
 }

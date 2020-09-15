@@ -45,16 +45,16 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/employee/{uid}")
-    public DeleteEmployeeResponseDTO deleteEmployee(@PathVariable String uid){
-        int deletedCount = employeeService.deleteEmployeeByUid(uid);
+    public DeleteEmployeeResponseDTO deleteEmployee(@PathVariable String uid) throws SVException {
+        try {
+            employeeService.deleteEmployeeByUid(uid);
+        } catch (Exception e) {
+            throw new SVException(MessageFormat.format("delete employee failed: {0}", e.getMessage()));
+        }
+
         DeleteEmployeeResponseDTO responseDTO = new DeleteEmployeeResponseDTO();
         responseDTO.setUid(uid);
-
-        if (deletedCount >= 1) {
-            responseDTO.setResult("Succeed");
-        } else {
-            responseDTO.setResult("Failed");
-        }
+        responseDTO.setResult("Succeed");
 
         return  responseDTO;
     }
@@ -79,7 +79,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee")
-    public GetEmployeesResponseDTO getEmployees(@RequestParam String name) {
+    public GetEmployeesResponseDTO getEmployees(@RequestParam String name) throws SVException {
         List<Employee> employees = employeeService.fetchEmployeesWithName(name);
 
         GetEmployeesResponseDTO responseDTO = new GetEmployeesResponseDTO();
